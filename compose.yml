@@ -1,0 +1,8 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bezs-test
+    ports:
+      - "8080:3000"
