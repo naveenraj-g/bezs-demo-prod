@@ -109,6 +109,8 @@ export async function middleware(req: NextRequest) {
   // Set the current URL as a custom header for use in server components
   const res = NextResponse.next();
   res.headers.set("x-url", req.url);
+
+  console.log("Middleware working");
   return res;
 
   // return NextResponse.next();
