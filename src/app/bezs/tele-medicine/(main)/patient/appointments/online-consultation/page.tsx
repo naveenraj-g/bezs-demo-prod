@@ -16,47 +16,50 @@ const PatientOnlineConsultationPage = async ({
   if (!session) redirect("/");
 
   const userId = session?.user.id;
+  let appointmentData = null;
 
-  const appointmentData = await prismaTeleMedicine.appointment.findUnique({
-    where: {
-      id: +params.appointmentId!,
-    },
-    select: {
-      id: true,
-      patient_id: true,
-      doctor_id: true,
-      appointment_date: true,
-      appointment_mode: true,
-      note: true,
-      time: true,
-      doctor: {
-        select: {
-          id: true,
-          orgId: true,
-          name: true,
-          specialization: true,
-          description: true,
-          agentPrompt: true,
-          voiceId: true,
-          img: true,
-          doctorType: true,
+  if (params.appointmentId) {
+    appointmentData = await prismaTeleMedicine.appointment.findUnique({
+      where: {
+        id: +params.appointmentId!,
+      },
+      select: {
+        id: true,
+        patient_id: true,
+        doctor_id: true,
+        appointment_date: true,
+        appointment_mode: true,
+        note: true,
+        time: true,
+        doctor: {
+          select: {
+            id: true,
+            orgId: true,
+            name: true,
+            specialization: true,
+            description: true,
+            agentPrompt: true,
+            voiceId: true,
+            img: true,
+            doctorType: true,
+          },
+        },
+        patient: {
+          select: {
+            id: true,
+            userId: true,
+            orgId: true,
+            name: true,
+            email: true,
+            gender: true,
+            blood_group: true,
+            img: true,
+            date_of_birth: true,
+          },
         },
       },
-      patient: {
-        select: {
-          id: true,
-          userId: true,
-          orgId: true,
-          name: true,
-          email: true,
-          gender: true,
-          blood_group: true,
-          img: true,
-          date_of_birth: true,
-        },
-      },
-    },
-  });
+    });
+  }
 
   return (
     <>
@@ -64,7 +67,7 @@ const PatientOnlineConsultationPage = async ({
         <div className="h-[500px]">
           <MediaRoom
             chatId={params.roomId}
-            name={appointmentData?.patient.name || ""}
+            name={session.user.name || "Patient"}
             audio={true}
             video={true}
           />

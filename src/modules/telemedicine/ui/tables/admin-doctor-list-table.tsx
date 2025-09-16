@@ -3,19 +3,13 @@
 import DataTable from "@/shared/ui/table/data-table";
 import { AdminDoctorTableColumn } from "./table-columns/admin-doctor-list-table-column";
 import { useTelemedicineAdminModal } from "../../stores/use-telemedicine-admin-modal-store";
-
-type PropsType = {
-  name: string;
-  id: string;
-  email: string;
-  specialization: string;
-};
+import { Doctor } from "../../../../../prisma/generated/telemedicine";
 
 export const AdminDoctorListTable = ({
   doctorsData,
   doctorsSize,
 }: {
-  doctorsData: PropsType[];
+  doctorsData: Doctor[];
   doctorsSize: number;
 }) => {
   const openModal = useTelemedicineAdminModal((state) => state.onOpen);

@@ -112,12 +112,12 @@ export const OrganizationListTable = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const totalOrgs = searchParams.get("totalOrgs") || 0;
-  const totalPages = searchParams.get("totalPages") || 0;
-  const sortBy = searchParams.get("sortBy") || undefined;
-  const sortDirection = searchParams.get("sortDirection") || undefined;
-  const searchValue = searchParams.get("searchValue") || undefined;
-  const filterValue = searchParams.get("filterValue") || undefined;
+  const totalOrgs = searchParams?.get("totalOrgs") || 0;
+  const totalPages = searchParams?.get("totalPages") || 0;
+  const sortBy = searchParams?.get("sortBy") || undefined;
+  const sortDirection = searchParams?.get("sortDirection") || undefined;
+  const searchValue = searchParams?.get("searchValue") || undefined;
+  const filterValue = searchParams?.get("filterValue") || undefined;
 
   const [organizations, setOrganizations] = useState<organizationsStateType[]>(
     []

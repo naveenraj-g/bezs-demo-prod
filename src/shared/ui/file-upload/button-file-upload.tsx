@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import { UploadCloud, X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
@@ -19,7 +19,7 @@ import Image from "next/image";
 type PropsType = {
   uploadUiType?: "dragAndDrop" | "click";
   uploadStorageType: StorageType | undefined;
-  referenceType?: string | null;
+  referenceType?: "profile" | null;
   maxSize?: number | undefined;
   testing?: boolean;
 };
@@ -32,10 +32,12 @@ export default function ButtonFileUpload({
   testing = false,
 }: PropsType) {
   const pathName = usePathname();
+  const router = useRouter();
   const { resolvedTheme } = useTheme();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [droppedFile, setDroppedFile] = useState<File[] | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(20);
@@ -96,11 +98,12 @@ export default function ButtonFileUpload({
                 setUploadProgress(percent);
               },
             });
-
-            console.log({ url });
           }
 
           toast.success("Upload successfully!");
+          if (referenceType === "profile") {
+            router.refresh();
+          }
           triggerRefetchFn();
         } catch (err) {
           console.log(err);
@@ -127,8 +130,11 @@ export default function ButtonFileUpload({
       if (uploadUiType === "click") handleFileChange(acceptedFiles);
       else if (uploadUiType === "dragAndDrop") {
         const file = acceptedFiles[0];
-        const preview = URL.createObjectURL(file);
-        setPreviewUrl(preview);
+        if (file) {
+          setDroppedFile(acceptedFiles);
+          const preview = URL.createObjectURL(file);
+          setPreviewUrl(preview);
+        }
       }
     },
     [uploadUiType, handleFileChange]
@@ -181,142 +187,66 @@ export default function ButtonFileUpload({
 
   const clearPreview = () => {
     setPreviewUrl(null);
+    setDroppedFile(null);
   };
-
-  /*
-  return (
-    <div className="flex items-center gap-2">
-      {isUploading && uploadUiType === "click" && (
-        <div className="w-8 h-8">
-          <CircularProgressbar
-            value={uploadProgress}
-            text={`${uploadProgress}%`}
-            styles={buildStyles({
-              textSize: "30px",
-              textColor: resolvedTheme?.includes("dark") ? "#fff" : "#000",
-              pathColor: resolvedTheme?.includes("dark") ? "#fff" : "#000",
-              trailColor: resolvedTheme?.includes("dark") ? "#333" : "#eee",
-            })}
-          />
-        </div>
-      )}
-      <div
-        {...getRootProps()}
-        className={cn(
-          uploadUiType === "dragAndDrop" &&
-            "w-full border-2 border-dashed border-primary/20 dark:border-primary/50 rounded-2xl p-6 text-center cursor-pointer hover:border-primary transition",
-          uploadUiType === "dragAndDrop" &&
-            isDragActive &&
-            "border-primary bg-primary/5 border-solid",
-          uploadUiType === "click" && "w-fit"
-        )}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <input
-          {...getInputProps()}
-          ref={fileInputRef}
-          type="file"
-          className="hidden"
-          // onChange={handleFileChange}
-          accept="*"
-          disabled={isUploading}
-        />
-
-        {uploadUiType === "dragAndDrop" ? (
-          previewUrl ? (
-            <div className="relative w-fit">
-              <Image
-                src={previewUrl}
-                alt="Preview Image"
-                width={200}
-                height={200}
-                style={{ objectFit: "cover" }}
-                className="rounded-full border-2 border-primary"
-              />
-              <button
-                onClick={clearPreview}
-                className="absolute top-2 right-2 bg-white border rounded-full p-1 hover:bg-red-100 transition"
-                title="Clear"
-              >
-                <X className="w-4 h-4 text-red-500" />
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center space-y-1">
-              <UploadCloud className="w-10 h-10 text-gray-500" />
-              <p className="text-sm text-gray-600 flex flex-col items-center space-y-2">
-                {isDragActive ? (
-                  <span className="text-zinc-900 dark:text-white font-semibold">
-                    Drop the files here...
-                  </span>
-                ) : (
-                  <>
-                    <span className="text-zinc-900 dark:text-white font-semibold">
-                      Drag & drop files here
-                    </span>
-                  </>
-                )}
-                <span className="text-zinc-400 text-sm">
-                  or click to browse (max 1 file, up to 5MB each)
-                </span>
-                <Button size="sm" className="w-fit mt-1">
-                  Browse files
-                </Button>
-              </p>
-            </div>
-          )
-        ) : uploadUiType === "click" ? (
-          <Button size="sm" disabled={isUploading}>
-            <UploadCloud className="w-5 h-5" />
-            Upload File
-          </Button>
-        ) : null}
-      </div>
-    </div>
-  );
-  */
 
   return (
     <div className="flex flex-col gap-4">
       {/* Image Preview (if exists) */}
-      {previewUrl && uploadUiType === "dragAndDrop" && (
-        <div className="relative w-fit">
-          <div className="relative flex size-40 shrink-0 overflow-hidden rounded-full">
-            <Image
-              src={previewUrl}
-              alt="Preview Image"
-              sizes="100vw"
-              objectFit="cover"
-              fill
-              style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              className="aspect-square size-full"
-            />
+      {!isUploading && previewUrl && uploadUiType === "dragAndDrop" && (
+        <div className="flex gap-4">
+          <div className="relative w-fit">
+            <div className="relative flex size-40 shrink-0 overflow-hidden rounded-full">
+              <Image
+                src={previewUrl}
+                alt="Preview Image"
+                sizes="100vw"
+                objectFit="cover"
+                fill
+                style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                className="aspect-square size-full"
+              />
+            </div>
+            <button
+              onClick={clearPreview}
+              className="absolute top-2 right-2 bg-white border rounded-full p-1 hover:bg-red-100 transition cursor-pointer"
+              title="Clear"
+            >
+              <X className="w-4 h-4 text-red-500" />
+            </button>
           </div>
-          <button
-            onClick={clearPreview}
-            className="absolute top-2 right-2 bg-white border rounded-full p-1 hover:bg-red-100 transition cursor-pointer"
-            title="Clear"
-          >
-            <X className="w-4 h-4 text-red-500" />
-          </button>
+          {uploadUiType === "dragAndDrop" && previewUrl && (
+            <Button
+              size="sm"
+              disabled={isUploading}
+              onClick={() => droppedFile && handleFileChange(droppedFile)}
+              className="self-end"
+            >
+              <UploadCloud className="w-5 h-5" />
+              Upload Profile
+            </Button>
+          )}
         </div>
       )}
 
       {/* Upload Input UI */}
       <div className="flex items-center gap-2">
         {/* Uploading Indicator */}
-        {isUploading && uploadUiType === "click" && (
-          <div className="w-8 h-8">
-            <CircularProgressbar
-              value={uploadProgress}
-              text={`${uploadProgress}%`}
-              styles={buildStyles({
-                textSize: "30px",
-                textColor: resolvedTheme?.includes("dark") ? "#fff" : "#000",
-                pathColor: resolvedTheme?.includes("dark") ? "#fff" : "#000",
-                trailColor: resolvedTheme?.includes("dark") ? "#333" : "#eee",
-              })}
-            />
+        {isUploading && (
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8">
+              <CircularProgressbar
+                value={uploadProgress}
+                text={`${uploadProgress}%`}
+                styles={buildStyles({
+                  textSize: "30px",
+                  textColor: resolvedTheme?.includes("dark") ? "#fff" : "#000",
+                  pathColor: resolvedTheme?.includes("dark") ? "#fff" : "#000",
+                  trailColor: resolvedTheme?.includes("dark") ? "#333" : "#eee",
+                })}
+              />
+            </div>
+            {uploadUiType === "dragAndDrop" && "uploading..."}
           </div>
         )}
 

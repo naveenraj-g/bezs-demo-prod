@@ -36,13 +36,16 @@ export const CommonSideBar = ({ label }: { label: string }) => {
   const { data, isPending } = useSession();
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
-  const appSlug = pathname.split("/")[2];
+  const appSlug = pathname?.split("/")[2];
   const [menuItems, setMenuItems] = useState<MenuItemsStateType>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isPending) {
-      const rolewiseAppMenus = getRolewiseAppMenuItems(data?.userRBAC, appSlug);
+      const rolewiseAppMenus = getRolewiseAppMenuItems(
+        data?.userRBAC,
+        appSlug!
+      );
       setMenuItems(rolewiseAppMenus || []);
       if (rolewiseAppMenus?.length === 0 || !rolewiseAppMenus) {
         setError("Failed to get menu data");

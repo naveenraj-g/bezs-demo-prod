@@ -11,13 +11,13 @@ const AccountSecurity = async () => {
   });
 
   return (
-    <>
+    <div className="w-full">
       <h1 className="text-xl">Security</h1>
       <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-300/80">
         Manage your account.
       </p>
       <AccountSecurityPage session={session} accounts={accounts} />
-    </>
+    </div>
   );
 };
 

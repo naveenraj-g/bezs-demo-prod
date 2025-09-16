@@ -270,7 +270,11 @@ const AccountSecurityPage = ({
                       <FormItem>
                         <FormLabel>Current Password</FormLabel>
                         <FormControl>
-                          <Input placeholder="******" {...field} />
+                          <Input
+                            placeholder="******"
+                            {...field}
+                            autoComplete="off"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -283,7 +287,11 @@ const AccountSecurityPage = ({
                       <FormItem>
                         <FormLabel>New Password</FormLabel>
                         <FormControl>
-                          <Input placeholder="******" {...field} />
+                          <Input
+                            placeholder="******"
+                            {...field}
+                            autoComplete="off"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -338,7 +346,11 @@ const AccountSecurityPage = ({
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input placeholder="******" {...field} />
+                          <Input
+                            placeholder="******"
+                            {...field}
+                            autoComplete="off"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

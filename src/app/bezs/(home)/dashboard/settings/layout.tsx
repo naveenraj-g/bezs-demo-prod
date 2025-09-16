@@ -13,7 +13,9 @@ const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
         className="h-full min-h-full"
       >
         <AppSettingsSidebar />
-        <ScrollArea className="w-full px-6 pt-2 pb-6">{children}</ScrollArea>
+        <div className="w-full px-6 pt-2 pb-6 overflow-y-scroll">
+          {children}
+        </div>
       </SidebarProvider>
     </>
   );

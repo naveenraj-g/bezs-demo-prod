@@ -287,11 +287,7 @@ export const CreateDoctorModal = () => {
                       placeholder="Enter a name"
                       control={AIDoctorForm.control}
                       className="w-full"
-                      disable={
-                        isLoading ||
-                        Boolean(error) ||
-                        Boolean(userData.length === 0)
-                      }
+                      disable={isLoading}
                     />
                     <CustomInput
                       type="input"

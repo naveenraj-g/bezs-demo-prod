@@ -48,7 +48,10 @@ export function UserRolesManage({
     rbacSessionData?.map((data: any) => data.role?.name).filter(Boolean)
   );
 
-  const roles = ["guest", ...userRoles];
+  const roles = [
+    ![...userRoles].includes("guest") && "guest",
+    ...userRoles,
+  ].filter(Boolean);
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -105,14 +108,16 @@ export function UserRolesManage({
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {roles.map((role, i) => (
-                        <SelectItem key={i} value={role}>
-                          {role}
-                          {currentRole === role && (
-                            <CircleCheckBig className="text-green-500" />
-                          )}
-                        </SelectItem>
-                      ))}
+                      {roles.map((role, i) => {
+                        return (
+                          <SelectItem key={i} value={role}>
+                            {role}
+                            {currentRole === role && (
+                              <CircleCheckBig className="text-green-500" />
+                            )}
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </FormControl>

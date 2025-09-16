@@ -47,6 +47,7 @@ type TAiDoctorStartConsultationProps = {
   allDoctorsData?: TDoctor[];
   className?: string;
   doctorId?: string | number;
+  appointmentType: AppointmentMode;
 };
 
 function AiDoctorStartConsultation({
@@ -54,6 +55,7 @@ function AiDoctorStartConsultation({
   allDoctorsData,
   doctorId,
   className,
+  appointmentType,
 }: TAiDoctorStartConsultationProps) {
   const session = useSession();
   const router = useRouter();
@@ -87,7 +89,7 @@ function AiDoctorStartConsultation({
       return;
     }
 
-    if (!values.doctorId || !values.note) {
+    if (!values.doctorId || !values.note || !appointmentType) {
       toast("Missing required datas!");
       return;
     }
@@ -100,22 +102,26 @@ function AiDoctorStartConsultation({
     const appointmentData = {
       ...values,
       appointmentType: "consultation",
-      appointmentMode: AppointmentMode.AI_CONSULT,
+      appointmentMode: appointmentType,
       date,
       time,
     };
 
     try {
       setLoading(true);
-      const appointmentId = await createDoctorAppointment(appointmentData, {
+      const id = await createDoctorAppointment(appointmentData, {
         userId: session.data?.user.id,
       });
       toast.success("Success", {
         description: "Redirecting to consultation page",
       });
-      router.push(
-        `/bezs/tele-medicine/patient/appointments/online-consultation?appointmentId=${appointmentId}`
-      );
+
+      const routeUrl =
+        appointmentType === "AI_CONSULT"
+          ? `/bezs/tele-medicine/patient/appointments/online-consultation?appointmentId=${id}`
+          : "/bezs/tele-medicine/patient/appointments";
+
+      router.push(routeUrl);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Something went wrong!");

@@ -106,7 +106,10 @@ export const appointmentsListTableColumn: ColumnDef<AppointmentTableDataType>[] 
 
         return (
           <div className="flex items-center gap-2 2xl:gap-3 py-2">
-            <ProfileAvatar imgUrl={doctorData.img} name={doctorData.name} />
+            <ProfileAvatar
+              imgUrl={doctorData.img || null}
+              name={doctorData.name}
+            />
             <div className="font-semibold">
               <h3 className="capitalize">{doctorData.name}</h3>
               <span className="text-xs md:text-sm font-light capitalize">

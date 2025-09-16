@@ -213,7 +213,7 @@ export const BookAppointmentModal = () => {
                   {patientData && (
                     <>
                       <ProfileAvatar
-                        imgUrl={patientData?.img}
+                        imgUrl={patientData?.img || null}
                         name={patientData?.name}
                         avatarClassName="size-12"
                       />

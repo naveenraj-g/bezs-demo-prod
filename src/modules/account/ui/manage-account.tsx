@@ -398,16 +398,16 @@ function ListUserAccounts({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead className="text-right">Name</TableHead>
+                    <TableHead>User Name</TableHead>
+                    <TableHead className="text-right">Email</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {credentialAccounts.map((account) => (
                     <TableRow key={account.id}>
-                      <TableCell>{session.user.email}</TableCell>
+                      <TableCell>{session.user.username}</TableCell>
                       <TableCell className="text-right">
-                        {session.user.name}
+                        {session.user.email}
                       </TableCell>
                     </TableRow>
                   ))}

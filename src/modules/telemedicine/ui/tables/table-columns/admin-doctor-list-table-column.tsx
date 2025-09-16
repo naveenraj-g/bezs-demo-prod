@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { AdminDoctorsDataType } from "@/modules/telemedicine/types/data-types";
+import { useTelemedicineAdminModal } from "@/modules/telemedicine/stores/use-telemedicine-admin-modal-store";
 import { TanstackTableColumnSorting } from "@/shared/ui/table/tanstack-table-column-sorting";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -18,8 +18,9 @@ import {
   Trash2,
   TriangleAlert,
 } from "lucide-react";
+import { Doctor } from "../../../../../../prisma/generated/telemedicine";
 
-export const AdminDoctorTableColumn: ColumnDef<AdminDoctorsDataType>[] = [
+export const AdminDoctorTableColumn: ColumnDef<Doctor>[] = [
   {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
@@ -37,14 +38,41 @@ export const AdminDoctorTableColumn: ColumnDef<AdminDoctorsDataType>[] = [
   {
     header: "LICENSE",
     accessorKey: "license_number",
+    cell: ({ row }) => {
+      const licenseNumber = row.getValue("license_number");
+
+      return licenseNumber ? (
+        licenseNumber
+      ) : (
+        <span className="inline-block text-center w-full">-</span>
+      );
+    },
   },
   {
     header: "PHONE",
     accessorKey: "phone",
+    cell: ({ row }) => {
+      const phone = row.getValue("phone");
+
+      return phone ? (
+        phone
+      ) : (
+        <span className="inline-block text-center w-full">-</span>
+      );
+    },
   },
   {
     header: "Email",
     accessorKey: "email",
+    cell: ({ row }) => {
+      const email = row.getValue("email");
+
+      return email ? (
+        email
+      ) : (
+        <span className="inline-block text-center w-full">-</span>
+      );
+    },
   },
   {
     header: ({ column }) => {
@@ -84,11 +112,14 @@ export const AdminDoctorTableColumn: ColumnDef<AdminDoctorsDataType>[] = [
     header: "Actions",
     id: "action",
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const openModal = useTelemedicineAdminModal((state) => state.onOpen);
+      const doctorData = row.original;
       const id: string = row.original.id;
 
       return (
         <div className="flex items-center gap-1">
-          <Button
+          {/* <Button
             size="sm"
             className="rounded-full"
             //   onClick={() =>
@@ -96,7 +127,7 @@ export const AdminDoctorTableColumn: ColumnDef<AdminDoctorsDataType>[] = [
             //   }
           >
             View
-          </Button>
+          </Button> */}
           <DropdownMenu>
             <DropdownMenuTrigger
               className={cn(
@@ -109,19 +140,16 @@ export const AdminDoctorTableColumn: ColumnDef<AdminDoctorsDataType>[] = [
             <DropdownMenuContent align="start" side="left">
               <DropdownMenuItem
                 className="cursor-pointer"
-                //   onClick={() =>
-                //     openModal({ type: "editUser", userId: user.id })
-                //   }
+                onClick={() => openModal({ type: "editDoctor", doctorData })}
               >
                 <PencilLine />
                 Edit details
               </DropdownMenuItem>
-              {/* <DropdownMenuSeparator /> */}
               <DropdownMenuItem
                 className="space-x-2 cursor-pointer"
-                //   onClick={() =>
-                //     openModal({ type: "deleteUser", userId: user.id })
-                //   }
+                onClick={() =>
+                  openModal({ type: "deleteDoctor", doctorId: id })
+                }
               >
                 <div className="flex items-center gap-2">
                   <Trash2 />

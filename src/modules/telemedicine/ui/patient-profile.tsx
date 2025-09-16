@@ -26,15 +26,24 @@ import {
 } from "../serveractions/patient/patient-profile-actions";
 import { toast } from "sonner";
 import ButtonFileUpload from "@/shared/ui/file-upload/button-file-upload";
+import { UserFile } from "../../../../prisma/generated/filenest";
+import { useFileNestUserModal } from "@/modules/filenest/stores/use-filenest-user-modal-store";
 
 interface DataProps {
   data?: Patient;
   type: "create" | "update";
   user?: User;
+  profilePicData: UserFile | null;
 }
 
-export const PatientProfile = ({ data, type, user }: DataProps) => {
+export const PatientProfile = ({
+  data,
+  type,
+  user,
+  profilePicData,
+}: DataProps) => {
   const router = useRouter();
+  const openModal = useFileNestUserModal((state) => state.onOpen);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -163,11 +172,34 @@ export const PatientProfile = ({ data, type, user }: DataProps) => {
         <div className="space-y-5">
           <h3 className="text-lg font-semibold">Personal Information</h3>
           <p className="font-medium text-sm">Profile Image</p>
-          <ButtonFileUpload
-            uploadUiType="dragAndDrop"
-            uploadStorageType="LOCAL"
-            referenceType="patientProfile"
-          />
+          {profilePicData ? (
+            <div className="flex items-center gap-4">
+              <p>Your Profile - {profilePicData.fileName}</p>
+              <Button
+                size="sm"
+                onClick={() => {
+                  openModal({
+                    type: "previewFile",
+                    fileData: {
+                      fileId: profilePicData.fileId,
+                      fileName: profilePicData.fileName,
+                      fileSize: String(profilePicData.fileSize),
+                      fileType: profilePicData.fileType,
+                      id: profilePicData.id,
+                    },
+                  });
+                }}
+              >
+                Preview Profile
+              </Button>
+            </div>
+          ) : (
+            <ButtonFileUpload
+              uploadUiType="dragAndDrop"
+              uploadStorageType="LOCAL"
+              referenceType="profile"
+            />
+          )}
         </div>
         <Form {...form}>
           <form

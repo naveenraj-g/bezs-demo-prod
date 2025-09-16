@@ -162,6 +162,7 @@ export function SignInForm() {
                           {...field}
                           type={inputType}
                           maxLength={16}
+                          autoComplete="off"
                         />
                         {inputType === "password" ? (
                           <EyeOff

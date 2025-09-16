@@ -5,10 +5,10 @@ import { prismaMain } from "@/lib/prisma";
 import { getServerSession } from "@/modules/auth/services/better-auth/action";
 import { auth } from "@/modules/auth/services/better-auth/auth";
 
-async function getData(userName: string) {
+async function getData(email: string) {
   const user = await prismaMain.user.findUnique({
     where: {
-      username: userName,
+      email: email,
     },
   });
 
@@ -16,11 +16,11 @@ async function getData(userName: string) {
 }
 
 export async function addMemberToOrg({
-  userName,
+  email,
   organizationId,
   role = "member",
 }: {
-  userName: string;
+  email: string;
   organizationId: string;
   role?: "member" | "admin" | "owner";
 }) {
@@ -30,7 +30,7 @@ export async function addMemberToOrg({
     throw new Error("Unauthorized!");
   }
 
-  const user = await getData(userName);
+  const user = await getData(email);
   if (!user) {
     throw new Error("User not found");
   }

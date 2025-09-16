@@ -1,10 +1,10 @@
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getServerSession } from "@/modules/auth/services/better-auth/action";
+import { getInitialPageServerOnly } from "@/shared/modules-utils/get-initial-page";
 import Link from "next/link";
 
 const TeleMedicineHomePage = async () => {
-  const session = await getServerSession();
+  const initialPage = await getInitialPageServerOnly();
 
   return (
     <div className="h-[calc(100vh-53px)]">
@@ -25,29 +25,15 @@ const TeleMedicineHomePage = async () => {
               about our telemedicine services.
             </p>
             <div className="flex flex-wrap items-center gap-2">
-              {session?.user?.role === "telemedicine-patient" && (
+              {initialPage ? (
                 <Link
-                  href="/bezs/tele-medicine/patient"
+                  href={initialPage.slug}
                   className={cn(buttonVariants({ size: "sm" }))}
                 >
-                  Go To Patient
+                  Open App
                 </Link>
-              )}
-              {session?.user?.role === "application-admin" && (
-                <Link
-                  href="/bezs/tele-medicine/admin"
-                  className={cn(buttonVariants({ size: "sm" }))}
-                >
-                  Go To Admin
-                </Link>
-              )}
-              {session?.user?.role === "telemedicine-doctor" && (
-                <Link
-                  href="/bezs/tele-medicine/doctor"
-                  className={cn(buttonVariants({ size: "sm" }))}
-                >
-                  Go To Doctor
-                </Link>
+              ) : (
+                <p>No pages found!</p>
               )}
             </div>
           </div>

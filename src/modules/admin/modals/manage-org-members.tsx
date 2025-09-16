@@ -38,6 +38,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
@@ -56,9 +57,7 @@ type Organization = OrganizationType & {
 };
 
 const addUserformSchema = z.object({
-  userName: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  email: z.string().email(),
 });
 
 type AddUserformSchemaType = z.infer<typeof addUserformSchema>;
@@ -83,7 +82,7 @@ export const ManageOrgMembersModal = () => {
   const form = useForm<AddUserformSchemaType>({
     resolver: zodResolver(addUserformSchema),
     defaultValues: {
-      userName: "",
+      email: "",
     },
   });
 
@@ -124,7 +123,7 @@ export const ManageOrgMembersModal = () => {
 
   async function onSubmitAddUser(values: AddUserformSchemaType) {
     const args = {
-      userName: values.userName,
+      email: values.email,
       organizationId: organizationId,
       session: session,
     };
@@ -184,15 +183,15 @@ export const ManageOrgMembersModal = () => {
               <div className="flex flex-col xs:flex-row gap-4 items-center">
                 <FormField
                   control={form.control}
-                  name="userName"
+                  name="email"
                   render={({ field }) => (
                     <FormItem className="xs:flex-1 w-full">
-                      {/* <FormLabel>Username</FormLabel> */}
+                      {/* <FormLabel>Email</FormLabel> */}
                       <FormControl>
                         <Input
-                          placeholder="username"
+                          placeholder="email - example123@gmail.com"
                           {...field}
-                          autoComplete="off"
+                          autoComplete="on"
                         />
                       </FormControl>
                       <FormMessage />

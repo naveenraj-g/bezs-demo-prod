@@ -140,6 +140,7 @@ export default async function handler(
         filePath: finalPath,
         createdBy: userId,
         updatedBy: userId,
+        referenceType: referenceType ? "PROFILE" : null,
       },
     });
 

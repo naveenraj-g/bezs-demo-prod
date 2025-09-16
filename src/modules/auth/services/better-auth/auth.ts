@@ -31,7 +31,7 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url, token }, request) => {
       try {
-        await axios.post("http://localhost:3000/api/send-email", {
+        await axios.post(`${process.env.APP_URL}/api/send-email`, {
           to: user.email,
           subject: "Reset your password",
           text: `Click the link to reset your password: ${url}`,
@@ -58,7 +58,7 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
       try {
-        await axios.post("http://localhost:3000/api/send-email", {
+        await axios.post(`${process.env.APP_URL}/api/send-email`, {
           to: user.email,
           subject: "Verify your email address",
           text: `Click the link to verify your email: ${url}`,
@@ -77,7 +77,7 @@ export const auth = betterAuth({
         request
       ) => {
         try {
-          await axios.post("http://localhost:3000/api/send-email", {
+          await axios.post(`${process.env.APP_URL}/api/send-email`, {
             to: user.email,
             subject: "Approve email change",
             text: `Click the link to approve the change: ${url}`,
@@ -91,7 +91,7 @@ export const auth = betterAuth({
       enabled: true,
       sendDeleteAccountVerification: async ({ user, url, token }, request) => {
         try {
-          await axios.post("http://localhost:3000/api/send-email", {
+          await axios.post(`${process.env.APP_URL}/api/send-email`, {
             to: user.email,
             subject: "Confirm your account delection",
             text: `Click the link to approve your account delection: ${url}`,
@@ -111,7 +111,7 @@ export const auth = betterAuth({
       otpOptions: {
         async sendOTP({ user, otp }, request) {
           try {
-            await axios.post("http://localhost:3000/api/send-email", {
+            await axios.post(`${process.env.APP_URL}/api/send-email`, {
               to: user.email,
               subject: "2 FA OTP",
               text: `Your 2 FA OTP: ${otp}`,

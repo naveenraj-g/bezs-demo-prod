@@ -8,6 +8,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { getRoleOrgWiseApps } from "@/shared/modules-utils/utils";
 import { useSession } from "@/modules/auth/services/better-auth/auth-client";
+import { formattedRBACSessionData } from "@/lib/format-session-data";
 
 function createLinkFromName(name: string): string {
   const splittedName = name.toLowerCase().split(" ");
@@ -22,6 +23,13 @@ type appStateType = {
 
 const AppsList = ({ isNavItem }: { isNavItem?: boolean }) => {
   const { data, isPending } = useSession();
+
+  const rbacData = formattedRBACSessionData(data);
+  const roleBasedAllowedRoutes: string[] = data?.user?.role
+    ? rbacData[data.user.role] || []
+    : [];
+
+  console.log(rbacData);
 
   const [appLists, setAppLists] = useState<appStateType>([]);
   const [apps, setApps] = useState<appStateType>([]);
@@ -48,6 +56,8 @@ const AppsList = ({ isNavItem }: { isNavItem?: boolean }) => {
       }
     }
   }, [isPending, data]);
+
+  console.log(apps);
 
   return (
     <>
@@ -77,7 +87,16 @@ const AppsList = ({ isNavItem }: { isNavItem?: boolean }) => {
           apps.map((appList, i) => (
             <Link
               key={i}
-              href={appList.slug}
+              href={
+                appList.slug.includes("tele-medicine")
+                  ? roleBasedAllowedRoutes[0].includes("tele-medicine") &&
+                    data?.user.role === "telemedicine-patient"
+                    ? "/bezs/tele-medicine/patient"
+                    : data?.user.role === "telemedicine-doctor"
+                      ? "/bezs/tele-medicine/doctor/appointments"
+                      : ""
+                  : appList.slug
+              }
               className={cn(
                 "flex flex-col gap-3 items-center w-[130px] h-[130px]",
                 isNavItem && "w-[105px] h-[100px]"

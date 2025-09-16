@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import AiDoctorStartConsultation from "./ai-doctor-start-consultation";
+import { AppointmentMode } from "../../../../../prisma/generated/telemedicine";
 
 type Doctor = {
   id: number | string;
@@ -17,9 +18,10 @@ type Doctor = {
 
 type TDoctorCard = {
   doctor?: Doctor;
+  appointmentType: AppointmentMode;
 };
 
-export const DoctorCard = ({ doctor }: TDoctorCard) => {
+export const DoctorCard = ({ doctor, appointmentType }: TDoctorCard) => {
   return (
     <Card className="block p-0 overflow-hidden">
       <Image
@@ -41,6 +43,7 @@ export const DoctorCard = ({ doctor }: TDoctorCard) => {
           isGeneralAiDoctorAppointment={false}
           className="w-full mt-2"
           doctorId={doctor?.id}
+          appointmentType={appointmentType}
         />
       </div>
     </Card>

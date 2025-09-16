@@ -84,7 +84,9 @@ export const createDoctorAppointment = async (
       },
     });
 
-    return data.id;
+    return validateData.data.appointmentMode === "AI_CONSULT"
+      ? data.id
+      : validateData.data.appointmentMode === "VIDEO" && data.livekit_room_id;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {

@@ -31,6 +31,7 @@ export const getInitialAppointmentBookingData = async (userId: string) => {
     const doctorsData = await prismaTeleMedicine.doctor.findMany({
       where: {
         orgId: patientData?.orgId || "",
+        doctorType: "HUMAN_DOCTOR",
       },
       select: {
         id: true,

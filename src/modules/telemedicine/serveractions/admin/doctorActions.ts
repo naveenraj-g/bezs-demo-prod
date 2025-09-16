@@ -9,10 +9,14 @@ import {
 import {
   createAIDoctorFormSchema,
   createDoctorFormSchema,
+  editAIDoctorFormSchema,
+  editHumanDoctorFormSchema,
 } from "../../schemas/create-doctor-form-schema";
 import { findOrgId } from "../patient/patient-profile-actions";
 import { headers } from "next/headers";
 import { adminRole } from "../../utils/roles";
+import { authProcedures } from "@/shared/server-actions/server-action";
+import z from "zod";
 
 export async function getAllDoctors() {
   const session = await getServerSession();
@@ -22,17 +26,7 @@ export async function getAllDoctors() {
   }
 
   try {
-    const doctorsData = await prismaTeleMedicine.doctor.findMany({
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        specialization: true,
-        phone: true,
-        license_number: true,
-        created_at: true,
-      },
-    });
+    const doctorsData = await prismaTeleMedicine.doctor.findMany();
 
     const doctorsSize = await prismaTeleMedicine.doctor.count();
 
@@ -64,7 +58,7 @@ export async function getAllUsersWithTelemedicineDoctorRole() {
         where: {
           organizationId: orgId,
           role: {
-            name: adminRole,
+            name: "telemedicine-doctor",
           },
         },
         include: {
@@ -159,3 +153,79 @@ export async function createAIDoctor(data: TCreateAIDoctorData) {
     },
   });
 }
+
+export const editHumanDoctor = authProcedures
+  .createServerAction()
+  .input(editHumanDoctorFormSchema)
+  .handler(async ({ input }) => {
+    const { userId, id, ...data } = input;
+
+    try {
+      await prismaTeleMedicine.doctor.update({
+        where: {
+          id,
+          userId,
+        },
+        data: {
+          ...data,
+        },
+      });
+    } catch (err) {
+      throw new Error(
+        typeof err === "string"
+          ? err
+          : err instanceof Error
+            ? err.message
+            : JSON.stringify(err)
+      );
+    }
+  });
+
+export const editAiDoctor = authProcedures
+  .createServerAction()
+  .input(editAIDoctorFormSchema)
+  .handler(async ({ input }) => {
+    const { id, ...data } = input;
+
+    try {
+      await prismaTeleMedicine.doctor.update({
+        where: {
+          id,
+        },
+        data: {
+          ...data,
+        },
+      });
+    } catch (err) {
+      throw new Error(
+        typeof err === "string"
+          ? err
+          : err instanceof Error
+            ? err.message
+            : JSON.stringify(err)
+      );
+    }
+  });
+
+export const deleteDoctor = authProcedures
+  .createServerAction()
+  .input(z.object({ id: z.string() }))
+  .handler(async ({ input }) => {
+    const { id } = input;
+
+    try {
+      await prismaTeleMedicine.doctor.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (err) {
+      throw new Error(
+        typeof err === "string"
+          ? err
+          : err instanceof Error
+            ? err.message
+            : JSON.stringify(err)
+      );
+    }
+  });

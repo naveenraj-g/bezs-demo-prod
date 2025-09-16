@@ -63,3 +63,15 @@ export const createAIDoctorFormSchema = z.object({
     .min(2, { message: "Image path must be at least 2 characters long" })
     .max(100, { message: "Image path must be less than 100 characters" }),
 });
+
+export const editHumanDoctorFormSchema = z
+  .object({
+    id: z.string().min(2, { message: "Id is required." }),
+  })
+  .merge(createDoctorFormSchema);
+
+export const editAIDoctorFormSchema = z
+  .object({
+    id: z.string().min(2, { message: "Id is required." }),
+  })
+  .merge(createAIDoctorFormSchema);

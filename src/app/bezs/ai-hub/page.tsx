@@ -1,10 +1,10 @@
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getServerSession } from "@/modules/auth/services/better-auth/action";
+import { getInitialPageServerOnly } from "@/shared/modules-utils/get-initial-page";
 import Link from "next/link";
 
 const AiHubHomePage = async () => {
-  const session = await getServerSession();
+  const initialPage = await getInitialPageServerOnly();
 
   return (
     <div className="h-[calc(100vh-53px)]">
@@ -23,21 +23,15 @@ const AiHubHomePage = async () => {
               models.
             </p>
             <div className="flex flex-wrap items-center gap-2">
-              {session?.user?.role === "application-admin" && (
+              {initialPage ? (
                 <Link
-                  href="/bezs/ai-hub/admin"
-                  className={cn(buttonVariants({ size: "sm" }))}
-                >
-                  Go To Admin
-                </Link>
-              )}
-              {session?.user?.role === "aihub-user" && (
-                <Link
-                  href="/bezs/ai-hub/ask-ai"
+                  href={initialPage.slug}
                   className={cn(buttonVariants({ size: "sm" }))}
                 >
                   Open App
                 </Link>
+              ) : (
+                <p>No pages found!</p>
               )}
             </div>
           </div>

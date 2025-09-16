@@ -137,7 +137,7 @@ const RenderInput = ({ field, props }: { field: any; props: InputProps }) => {
           <Textarea
             type={props.inputType}
             placeholder={props.placeholder}
-            className={props.className}
+            className={`${props.className} max-h-32`}
             disabled={props.disable}
             {...field}
           ></Textarea>
